@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.View
 import android.widget.MediaController
 import android.widget.SeekBar
 import android.widget.Toast
@@ -15,6 +16,8 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL
 import com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS
 import com.arthenica.mobileffmpeg.FFmpeg
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -44,10 +47,24 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        initAds()
         initViews()
         initListeners()
         binding.btnSelect.setOnClickListener { selectVideo() }
 
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this) {}
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (this::originalPath.isInitialized) {
+            playVideo(originalPath)
+        }
     }
 
     private fun initListeners() {
@@ -73,6 +90,10 @@ class MainActivity : AppCompatActivity() {
             val ss = (seekbarValue - 100) / 100
             brightnessLevel = ss
 
+            if (!this::originalPath.isInitialized){
+                Toast.makeText(this, "Kindly Select a Video First", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             runFFMpeg()
         }
         binding.brightnessSeekbar.setOnSeekBarChangeListener(object :
@@ -97,6 +118,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun runFFMpeg() {
+        showProgressBar()
         val outputDirectory =
             File(Environment.getExternalStoragePublicDirectory("").toString() + "/VideoBrightness/")
         if (!outputDirectory.exists()) {
@@ -111,7 +133,13 @@ class MainActivity : AppCompatActivity() {
 
             if (returnCode == RETURN_CODE_SUCCESS) {
                 Log.e(Config.TAG, "Async command execution completed successfully.")
-                playVideo2(outputPath)
+               // playVideo2(outputPath)
+               hideProgressBar()
+
+                val intent = Intent(this, ResultActivity::class.java).apply {
+                    putExtra("vid_url", outputPath)
+                }
+                startActivity(intent)
 
             } else if (returnCode == RETURN_CODE_CANCEL) {
                 Log.e(Config.TAG, "Async command execution cancelled by user.")
@@ -124,19 +152,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playVideo2(outputPath: String) {
-        val videoView = findViewById<VideoView>(R.id.videoView2)
-        //Creating MediaController
-        val mediaController = MediaController(this)
-        mediaController.setAnchorView(videoView)
-        //specify the location of media file
-        val uri: Uri = Uri.parse(outputPath)
-        //Setting MediaController and URI, then starting the videoView
-        videoView.setMediaController(mediaController)
-        videoView.setVideoURI(uri)
-        videoView.requestFocus()
-        videoView.start()
+    private fun hideProgressBar() {
+        binding.btnRender.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
     }
+
+    private fun showProgressBar() {
+        binding.btnRender.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
 
     private fun getBrightnessString(originalPath: String, outputDir: String): String {
         outputPath =
@@ -171,6 +196,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViews() {
         videoPicker = VideoPicker(this)
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun selectVideo() {
@@ -210,6 +236,20 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
+    }
+
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putString("StringKey", "Folio3/blog")
+// etc.
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        // Restore UI state using savedInstanceState.
+      val Var1 = savedInstanceState.getBoolean("StringKeyForBoolean", false)
+
     }
 
 

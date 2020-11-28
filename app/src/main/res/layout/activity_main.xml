@@ -47,10 +47,37 @@
         android:textSize="15sp"
         android:text="SET BRIGHTNESS"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Darkness"
+            android:textColor="@color/purple_500"
+            android:layout_alignParentStart="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal"
+            android:textColor="@color/purple_500"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Brightness"
+            android:textColor="@color/purple_500"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
     <SeekBar
         android:id="@+id/brightness_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:thumbTint="@color/purple_500"
+        android:progressTint="@color/purple_500"
+        android:progress="100"
         android:max="200"/>
 
     <RelativeLayout
@@ -60,46 +87,64 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-100"
+            android:textColor="@color/purple_500"
             android:layout_alignParentStart="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:textColor="@color/purple_500"
            android:layout_centerHorizontal="true"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+100"
+            android:textColor="@color/purple_500"
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
     <Button
         android:id="@+id/btnRender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
         android:layout_marginBottom="15dp"
         android:text="Render"
         android:textColor="@color/white"
      />
+
+    <LinearLayout
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/purple_500"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/purple_500"
+            android:text="Loading..."/>
+    </LinearLayout>
+
+
 </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        android:layout_weight="4">
-
-        <VideoView
-            android:id="@+id/videoView2"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true" />
-
-    </RelativeLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-9562015878942760/7298505555">
+    </com.google.android.gms.ads.AdView>
 
 </LinearLayout>
